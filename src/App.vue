@@ -10,20 +10,19 @@
             <a target="_blank" href="#"></a>
           </div>
           <div id="menu" class="right-box">
-            <span style="display: none;">
-              <a href class>登录</a>
+            <span v-show="!$store.state.isLogin">
+              <router-link to="/login">登录</router-link>
+
               <strong>|</strong>
               <a href class>注册</a>
               <strong>|</strong>
             </span>
-            <span>
+            <span v-show="$store.state.isLogin">
               <!-- <a href class> -->
-                <router-link to="/user">
-                会员中心
-                </router-link>
-                <!-- </a> -->
+              <router-link to="/user">会员中心</router-link>
+              <!-- </a> -->
               <strong>|</strong>
-              <a>退出</a>
+              <a @click="logout">退出</a>
               <strong>|</strong>
             </span>
             <router-link to="/cart">
@@ -43,9 +42,9 @@
             <ul>
               <li class="index">
                 <!-- <a href="#" class> -->
-                  <router-link to="/index">
+                <router-link to="/index">
                   <span class="out" style="top: 0px;">首页</span>
-                  </router-link>
+                </router-link>
                 <!-- </a> -->
               </li>
               <li class="news">
@@ -130,7 +129,15 @@
 </template>
 <script>
 export default {
- 
+  methods: {
+    async logout() {
+      let res = await this.$http.get("site/account/logout");
+      if (res.data.status === 0) {
+        this.$store.commit("changeLogin", false);
+        this.$router.push("/index");
+      }
+    }
+  }
 };
 </script>
 <style >

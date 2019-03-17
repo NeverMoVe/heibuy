@@ -119,7 +119,9 @@
           <div class="cart-foot clearfix">
             <div class="right-box">
               <button class="button" onclick="javascript:location.href='/index.html';">继续购物</button>
-              <button class="submit" onclick="formSubmit(this, '/', '/shopping.html');">立即结算</button>
+              <router-link :to="'/fillOrder/'+this.ids">
+                <button class="submit" @click="pay">立即结算</button>
+              </router-link>
             </div>
           </div>
           <!--购物车底部-->
@@ -133,13 +135,25 @@
 export default {
   data() {
     return {
-      cartList: []
+      cartList: [],
+      ids: ""
     };
   },
   methods: {
     // 删除功能
     delOne(index) {
       this.cartList.splice(index, 1);
+    },
+
+    pay() {
+      console.log(this.cartList);
+      this.cartList.forEach(v => {
+        if(v.isChecked===true){
+          this.ids+=v.id+','
+        }
+      });
+      this.ids=this.ids.substring(0,this.ids.length-1)
+      
     }
   },
   async created() {
@@ -153,7 +167,7 @@ export default {
 
     res.data.message.forEach(v => {
       v.buycount = this.$store.state.goodsData[v.id];
-      v.isChecked = true
+      v.isChecked = true;
     });
     this.cartList = res.data.message;
   },
@@ -175,7 +189,7 @@ export default {
   computed: {
     checkAll: {
       get() {
-       let newArr = this.cartList.filter(v => {
+        let newArr = this.cartList.filter(v => {
           //   v.isChecked==true
           return v.isChecked;
         });

@@ -11,8 +11,10 @@ import category from '../components/category.vue'
 import user from '../components/userCenter.vue'
 import order from '../components/userorder.vue'
 import singlecenter from '../components/singleCenter.vue'
-import ordercontent  from '../components/ordercontent.vue'
+import ordercontent from '../components/ordercontent.vue'
 import cart from '../components/cart.vue'
+import fillOrder from '../components/fillOrder.vue'
+import login from '../components/login.vue'
 // 关联路由与组件
 let routes = [{
     path: '/',
@@ -31,27 +33,51 @@ let routes = [{
     component: cart
   },
   {
+    path: '/login',
+    component: login
+  },
+  {
+    path: '/fillOrder/:id',
+    component: fillOrder,
+    meta:{
+      checklogin:true
+    }
+  },
+  {
     path: '/user',
     component: user,
-    children:[{
-      path:'',
-      redirect:'singlecenter'
-    },{
-      path:'singlecenter',
-      component:singlecenter
-    },{
-      path:'order',
-      component:order
-    },
-    {
-      path:'ordercontent',
-      component:ordercontent
-    }]
+    children: [{
+        path: '',
+        redirect: 'singlecenter'
+      }, {
+        path: 'singlecenter',
+        component: singlecenter
+      }, {
+        path: 'order',
+        component: order
+      },
+      {
+        path: 'ordercontent',
+        component: ordercontent
+      }
+    ]
   }
 ]
 // 创建路由对象
 let router = new VueRouter({
-    routes
-  })
+  routes
+})
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.checklogin===true) {
+     let res=await Vue.prototype.$http.get('site/account/islogin');
+     if(res.data.code=='nologin'){
+       next('/login')
+     }else{
+       next();
+     }
+  }else{
+    next()
+  }
+})
 // 把router对象暴露出去
-  export default router
+export default router

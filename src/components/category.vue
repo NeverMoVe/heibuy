@@ -170,6 +170,7 @@ export default {
     methods:{
         // 添加购物车
         add2Cart(){
+            console.log(this.goodsinfo.id);
             this.$store.commit('add2Cart',{
                 goodsId:this.goodsinfo.id,
                 goodsNum:this.buynum,

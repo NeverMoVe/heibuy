@@ -10,6 +10,7 @@ import './assets/statics/site/css/style.css'
 import axios from 'axios'
 // 设置基地址
 axios.defaults.baseURL='http://111.230.232.110:8899/'
+axios.defaults.withCredentials = true
 // 给vue的原型添加$http
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
@@ -31,8 +32,18 @@ import router from './router/router'
 import store from './router/store'
 new Vue({
     // 渲染内容
-
+  
     render: h => h(App),
+    // 使用声明周期钩子在项目启动时候判断是否有登录，判断仓库的islogin是否为true
+
+    async beforeCreate() {
+      let res =await this.$http.get('site/account/islogin')
+      if(res.data.code==='logined'){
+        this.$store.commit('changeLogin',true)
+      }else{
+        this.$store.commit('changeLogin',false)
+      }
+    },
     router,
     store
   })
